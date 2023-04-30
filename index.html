@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>nekos.best image puller</title>
+</head>
+<body>
+  <img id="neko-img" src="" alt="Neko Image">
+  <script>
+    function getNekoPic() {
+      const url = "https://nekos.best/api/v2/neko";
+
+      return fetch(url)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Network response was not ok");
+        })
+        .then(data => {
+          if (data.results && data.results.length > 0 && data.results[0].url) {
+            return data.results[0].url;
+          } else {
+            throw new Error('JSON object does not contain "results" or "url" properties');
+          }
+        });
+    }
+
+    getNekoPic()
+      .then(imageUrl => {
+        // Set the image source URL
+        const nekoImg = document.getElementById("neko-img");
+        nekoImg.src = imageUrl;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  </script>
+</body>
+</html>
