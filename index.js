@@ -16,6 +16,7 @@ app.get('/', async (req, res) => {
       res.writeHead(200, {
         'Content-Type': 'image/png',
         'Content-Length': imageBuffer.length,
+        'cache-control': 'max-age=0, no-cache, no-store, must-revalidate'
       });
       res.end(imageBuffer);
     } else {
