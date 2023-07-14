@@ -1,5 +1,6 @@
 import express from "express";
 import fetch from "node-fetch";
+import sharp from "sharp";
 
 const app = express();
 const PORT = process.env.PORT || 3030;
@@ -13,12 +14,17 @@ app.get('/', async (req, res) => {
       const imageUrl = data.results[0].url;
       const imageResponse = await fetch(imageUrl);
       const imageBuffer = await imageResponse.buffer();
+
+      const croppedImage = await sharp(imageBuffer)
+        .resize(300)
+        .extract({ left: 0, top: 0, width: 300, height: 400 })
+        .toBuffer();
+
       res.writeHead(200, {
         'Content-Type': 'image/png',
-        'Content-Length': imageBuffer.length,
-        'cache-control': 'max-age=0, no-cache, no-store, must-revalidate'
+        'Content-Length': croppedImage.length,
       });
-      res.end(imageBuffer);
+      res.end(croppedImage);
     } else {
       throw new Error('JSON object does not contain "results" or "url" properties');
     }
